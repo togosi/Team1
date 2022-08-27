@@ -15,8 +15,8 @@ def hit(x1,y1,width,height):
     global life, inv
     xs = int(width/2 + 5)
     ys = int(height/2 + 5)
-    lex = abs(x1 + width/2 - px)
-    ley = abs(y1 + height/2 - py)
+    lex = abs(x1 + width/2 - px - 5)
+    ley = abs(y1 + height/2 - py - 5)
     if lex < xs and ley < ys and inv == 0:
         life -= 1
         inv = 50
