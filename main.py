@@ -11,6 +11,17 @@ blue = (0,0,255)
 bluegreen = (0,255,255)
 life = 3   
 inv = 0
+def hit(x1,y1,width,height):
+    global life, inv
+    xs = int(width/2 + 5)
+    ys = int(height/2 + 5)
+    lex = abs(x1 + width/2 - px)
+    ley = abs(y1 + height/2 - py)
+    if lex < xs and ley < ys and inv == 0:
+        life -= 1
+        inv = 50
+    if inv > 0:
+        inv -= 1
 def move_player(screen,key):
     global px,py
     pygame.draw.rect(screen,black,[px,py,10,10])
@@ -35,13 +46,8 @@ def move_player(screen,key):
     if inv == 0:
         pygame.draw.rect(screen,bluegreen,[px,py,10,10])
 def damage():
-    global life, inv
-    pygame.draw.rect(screen,blue,[200,300,20,20])    
-    if 200<px<220 and 300<py<320 and inv ==0 :
-        life -= 1
-        inv = 50
-    if inv > 0 :
-        inv -= 1
+    pygame.draw.rect(screen,blue,[200,300,20,20])
+    hit(200,300,20,20)    
 def main():  
     global screen
     pygame.init()
