@@ -3,40 +3,44 @@ import sys
 import random
 bg_y = 0
 px = 315
-py = 235
+py = 410
 white = (255,255,255)
 black = (0,0,0)
 yellow = (255,255,0)
-red = (255,0,0)
+red = (200,0,0)
 blue = (0,0,255)
-bluegreen = (0,255,255)
-life = 3   
+life = 100
 inv = 0
 cnt = 0
 randwid = random.randint(50,150)
-randy = random.randint(110,410-randwid) 
+randy = random.randint(210,510-randwid) 
 randx = random.randint(170,470-randwid)
 clock = pygame.time.Clock()
-def hit(x1,y1,width,height):
+def hit(dmg,x1,y1,width,height):
     global life,inv 
     xs = int(width/2 + 5)
     ys = int(height/2 + 5)
     lex = abs(x1 + width/2 - px - 5)
     ley = abs(y1 + height/2 - py - 5)
     if lex < xs and ley < ys and inv == 0:
-        life -= 1
+        life -= dmg
         inv = 50
+def pcl():
+    if inv > 0:
+        pygame.draw.rect(screen,(0,255,0),[px,py,10,10])
+    if inv == 0:
+        pygame.draw.rect(screen,(0,255,255),[px,py,10,10])
 def move_player(screen,key):
     global px,py
     pygame.draw.rect(screen,black,[px,py,10,10])
     if key[pygame.K_UP] == 1:
         py = py - 5
-        if py < 110:
-            py = 110
+        if py < 260:
+            py = 260
     if key[pygame.K_DOWN] == 1:
         py = py + 5
-        if py > 400:
-            py = 400
+        if py > 550:
+            py = 550
     if key[pygame.K_LEFT] == 1:
         px = px - 5
         if px < 170:
@@ -45,56 +49,50 @@ def move_player(screen,key):
         px = px + 5
         if px > 460:
             px = 460
-    if inv > 0:
-        pygame.draw.rect(screen,(0,255,0),[px,py,10,10])
-    if inv == 0:
-        pygame.draw.rect(screen,bluegreen,[px,py,10,10])
+    pcl()
 def life_management():
     global life, inv
     if inv > 0:
         inv -= 1
-    if life == 2:
-        pygame.draw.rect(screen,black,[350,440,20,20])
-    if life == 1:
-        pygame.draw.rect(screen,black,[310,440,20,20])
+    pygame.draw.rect(screen,(128,128,0),[171+int(life/100*200),590,int((1-life/100)*200),30])
+    ltxt = "HP:" + str(life) + "/100"
+    font = pygame.font.Font(None,25)
+    pygame.draw.rect(screen,black,[390,590,100,30])
+    screen.blit(font.render(ltxt,True,white),[390,590])
     if life == 0:
-        pygame.draw.rect(screen,black,[270,440,20,20])
         game_end()
 def game_end():
     global clock
     screen.fill(black)
     font = pygame.font.Font(None,80)
-    screen.blit(font.render("GAME OVER",True,white),[160,240])
-#def damage():
-#    pygame.draw.rect(screen,blue,[200,300,20,20])
-#    hit(200,300,20,20)
-def attack1():
+    screen.blit(font.render("GAME OVER",True,white),[160,340])
+    exit()
+def attack1(dmg):
     global cnt,randwid,randy,randx
     if cnt == 0:
         randwid = random.randint(50,150)
-        randy = random.randint(110,410-randwid) 
+        randy = random.randint(260,560-randwid) 
         randx = random.randint(170,470-randwid)
-    pygame.draw.rect(screen,(cnt,cnt,0),[randx,randy,randwid,randwid])
-    cnt += 1
-    if cnt == 255:
+    if cnt < 250:
+        pygame.draw.rect(screen,(cnt,cnt,cnt),[randx,randy,randwid,randwid])
+        cnt += 5
+    if  cnt >= 250:
         pygame.draw.rect(screen,red,[randx,randy,randwid,randwid])
-        hit(randx,randy,randwid,randwid)
-        pygame.draw.rect(screen,black,[170,110,300,300])
+        hit(dmg,randx,randy,randwid,randwid)
+        cnt += 1
+    if cnt == 255:
+        pygame.draw.rect(screen,black,[170,260,300,300])
         cnt = 0
-    if inv > 0:
-        pygame.draw.rect(screen,(0,255,0),[px,py,10,10])
-    if inv == 0:
-        pygame.draw.rect(screen,bluegreen,[px,py,10,10])
-def main(): 
+    pcl()
+def __init__(): 
     global screen
     pygame.init()
     pygame.display.set_caption("Battle")
-    screen = pygame.display.set_mode((640,480))
-    pygame.draw.rect(screen,white,[160,100,320,320])
-    pygame.draw.rect(screen,black,[170,110,300,300])
-    pygame.draw.rect(screen,red,[270,440,20,20])
-    pygame.draw.rect(screen,red,[310,440,20,20])
-    pygame.draw.rect(screen,red,[350,440,20,20])
+    screen = pygame.display.set_mode((640,640))
+    pygame.draw.rect(screen,white,[160,250,320,320])
+    pygame.draw.rect(screen,black,[170,260,300,300])
+    pygame.draw.rect(screen,red,[170,590,200,30])
+def main():
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -102,9 +100,10 @@ def main():
                 sys.exit()
         key = pygame.key.get_pressed()
         move_player(screen,key)
-        attack1()
+        attack1(20)
         life_management()
         pygame.display.update()
         clock.tick(70)
 if __name__ == "__main__":
+    __init__()
     main()
