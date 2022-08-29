@@ -1,5 +1,5 @@
-def und(life,enemylife):
-    global px,py,white,black,red,cnt,y,inv,myhp,maxhp,maxhp,e_maxhp,enemyhp,ecnt,mysize
+def und(life,enemylife,pwr,spd,Lock_on,a1,a2,a2_rev):
+    global px,py,white,black,red,cnt,inv,myhp,maxhp,maxhp,e_maxhp,enemyhp,ecnt,mysize,y1,y2
     import pygame
     import sys
     import random
@@ -16,7 +16,8 @@ def und(life,enemylife):
     inv = 0
     cnt = 0
     ecnt = 0
-    y = 50
+    y1 = 50
+    y2 = 640
     def hit(dmg,x1,y1,width,height):
         global inv ,myhp
         ms = int(mysize/2)
@@ -41,16 +42,16 @@ def und(life,enemylife):
                 py = 260
         if key[pygame.K_DOWN] == 1:
             py = py + 5
-            if py > 550:
-                py = 550
+            if py > 560 - mysize:
+                py = 560 - mysize
         if key[pygame.K_LEFT] == 1:
             px = px - 5
             if px < 170:
                 px = 170
         if key[pygame.K_RIGHT] == 1:
             px = px + 5
-            if px > 460:
-                px = 460
+            if px > 470 - mysize:
+                px = 470 - mysize
         pcl()
     def life_management():
         global inv
@@ -95,33 +96,73 @@ def und(life,enemylife):
             cnt = 0
         pcl()
     def atk2(dmg,spd,Lock_on):
-        global y,randx2,x1,x2
-        if y == 50:
-            randx2 = random.randint(170,450)
+        global y1,x1,x2
+        if y1 == 50:
+            randx1 = random.randint(170,450)
             if Lock_on == True:
                 x1 = px
                 x2 = py
             if Lock_on == False:
-                x1 = randx2
-                x2 = randx2 +80
-        if y < 535:
-            pygame.draw.rect(screen,white,[x1,y,20,100])
-            pygame.draw.rect(screen,white,[y-80,x2,100,20])
-            pygame.draw.rect(screen,black,[x1,y-spd,20,spd])
-            pygame.draw.rect(screen,black,[y-80-spd,x2,spd,20])
+                x1 = randx1
+                x2 = randx1 +80
+        if y1 < 540-spd:
+            pygame.draw.rect(screen,white,[x1,y1,20,100])
+            pygame.draw.rect(screen,white,[y1-80,x2,100,20])
+            pygame.draw.rect(screen,black,[x1,y1-spd,20,spd])
+            pygame.draw.rect(screen,black,[y1-80-spd,x2,spd,20])
             pygame.draw.rect(screen,white,[160,250,320,10])
             pygame.draw.rect(screen,white,[160,250,10,320])
             pygame.draw.rect(screen,white,[470,250,10,320])
             pygame.draw.rect(screen,white,[160,560,320,10])
-            y += spd
+            y1 += spd
             pcl()
-        if y >= 540-spd:
-            pygame.draw.rect(screen,black,[x1,y-spd,20,100])
-            pygame.draw.rect(screen,black,[y-80-spd,x2,100,20])
-            y = 50
+        if y1 >= 540-spd:
+            pygame.draw.rect(screen,black,[x1,y1-spd,20,100])
+            pygame.draw.rect(screen,black,[y1-80-spd,x2,100,20])
+            y1 = 50
             pcl()
-        hit(dmg,x1,y,20,100)
-        hit(dmg,y-80,x2,100,20)
+        hit(dmg,x1,y1,20,100)
+        hit(dmg,y1-80,x2,100,20)
+    def atk2_rev(dmg,spd,Lock_on):
+        global y2,x3,x4
+        if y2 == 640:
+            randx2 = random.randint(170,450)
+            if Lock_on == True:
+                x3 = px
+                x4 = py
+            if Lock_on == False:
+                x3 = randx2
+                x4 = randx2 +80
+        if y2 > 260-spd:
+            pygame.draw.rect(screen,white,[x3,y2,20,100])
+            pygame.draw.rect(screen,black,[x3,y2+100-spd,20,spd])
+            pygame.draw.rect(screen,white,[y2-80,x4,100,20])
+            pygame.draw.rect(screen,black,[y2-80+100+spd,x4,spd,20])
+            pygame.draw.rect(screen,white,[160,250,320,10])
+            pygame.draw.rect(screen,white,[160,250,10,320])
+            pygame.draw.rect(screen,white,[470,250,10,320])
+            pygame.draw.rect(screen,white,[160,560,320,10])
+            y2 -= spd
+            pcl()
+        if y2 <= 260:
+            pygame.draw.rect(screen,black,[x3,y2,20,100])
+            pygame.draw.rect(screen,black,[y2-80+spd,x4,100+spd,20])
+            y2 = 640
+        hit(dmg,x3,y2,20,100)
+        hit(dmg,y2-80,x4,100,20)
+    def atkmanager(Lock_on,a1,a2,a2_rev):
+        if a1 == "T":
+            atk1(pwr,50,200)
+        if a2 == "T":
+            if Lock_on == "T":
+                atk2(pwr,spd,True)
+            if Lock_on == "F":
+                atk2(pwr,spd,False)
+        if a2_rev == "T":
+            if Lock_on == "T":
+                atk2_rev(pwr,spd,True)
+            if Lock_on == "F":
+                atk2_rev(pwr,spd,False)
     def __init__(): 
         global screen
         pygame.init()
@@ -133,7 +174,7 @@ def und(life,enemylife):
         txt = "HP:" + str(myhp) + "/" + str(maxhp)
         font = pygame.font.Font(None,25)
         screen.blit(font.render(txt,True,white),[390,590])
-    def main():
+    def main(Lock_on,a1,a2,a2_rev):
         clock = pygame.time.Clock()
         while True:
             for event in pygame.event.get():
@@ -142,8 +183,7 @@ def und(life,enemylife):
                     sys.exit()
             key = pygame.key.get_pressed()
             move_player(screen,key)
-            atk1(20,10,200)
-            atk2(20,5,False)
+            atkmanager(Lock_on,a1,a2,a2_rev)
             life_management()
             enemylife_management()
             pygame.display.update()
@@ -151,7 +191,7 @@ def und(life,enemylife):
             if myhp <= 0 or enemyhp == 0:
                 break
     __init__()
-    main()
+    main(Lock_on,a1,a2,a2_rev)
     return(myhp)
 if __name__ == "__main__":
-    print(und(50,10))
+    print(und(100,20,10,10,"T","T","T","T"))
