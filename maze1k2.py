@@ -17,6 +17,14 @@ imgFloor = pygame.image.load("kusa.png")
 imgWarp = pygame.image.load("worp.png")
 imgPlayer = pygame.image.load("maetati.png")
 
+ha = pygame.image.load("ha.png")
+# hidaritati = pygame.image.load("hidaritati.png")
+# maetati = pygame.image.load("maetati.png")
+# migitati = pygame.image.load("migitati.png")
+# usirotati = pygame.image.load("usirotati.png")
+wareyuka = pygame.image.load("wareyuka.png")
+yuka = pygame.image.load("yuka.png")
+
 import random
 import main6k1
 
@@ -46,7 +54,12 @@ def meiq():
         global hp,maxhitpoint,idx,tmr
         at = random.randint(1,50)
         if 1 <= at <= 3:
-            
+            pygame.mixer.music.load("遭遇音.mp3")
+            pygame.mixer.music.play(1)
+            if tmr == 1:
+                pygame.mixer.music.load("8-bit_Aggressive1.mp3")
+                pygame.mixer.music.set_volume(0.5)
+                pygame.mixer.music.play(-1)
             if at == 1:
                 
                 idx = 2
@@ -101,19 +114,23 @@ def meiq():
     #     root.after(100, main_proc)
 
     def move_player(key):
-        global pl_x, pl_y, idx
+        global pl_x, pl_y, idx,imgPlayer
         
         if key[pygame.K_UP] == 1 and idx == 1:
             if maze[pl_y-1][pl_x] != 1: pl_y = pl_y - 1
+            imgPlayer = pygame.image.load("usirotati.png")
             irirkougeki()
         if key[pygame.K_DOWN] == 1 and idx == 1:
             if maze[pl_y+1][pl_x] != 1: pl_y = pl_y + 1
+            imgPlayer = pygame.image.load("maetati.png")
             irirkougeki()
         if key[pygame.K_LEFT] == 1 and idx == 1:
             if maze[pl_y][pl_x-1] != 1: pl_x = pl_x - 1
+            imgPlayer = pygame.image.load("hidaritati.png")
             irirkougeki()
         if key[pygame.K_RIGHT] == 1 and idx == 1:
             if maze[pl_y][pl_x+1] != 1: pl_x = pl_x + 1
+            imgPlayer = pygame.image.load("migitati.png")
             irirkougeki()
 
     def draw_dungeon(bg):
@@ -151,6 +168,7 @@ def meiq():
             if idx == 0:
                 if tmr == 1:
                     pygame.mixer.music.load("8-bit_Aggressive1.mp3")
+                    pygame.mixer.music.set_volume(0.5)
                     pygame.mixer.music.play(-1)
                 screen.fill((0,0,0))
                 font = pygame.font.Font(None,80)
@@ -173,6 +191,7 @@ def meiq():
             elif idx == 1:
                 if tmr == 1:
                     pygame.mixer.music.load("魔法使いと振り子時計_2.mp3")
+                    pygame.mixer.music.set_volume(0.2)
                     pygame.mixer.music.play(-1)
                 move_player(key)
                 draw_dungeon(screen)
